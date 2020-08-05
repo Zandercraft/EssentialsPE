@@ -90,7 +90,6 @@ permissions:
             essentials.depth:
                 default: true
                 description: "Get your current height related to sea-level"
-                description: "Get your current height related to sea-level"
             essentials.essentials:
                 default: op
                 description: "See the current Essentials version"

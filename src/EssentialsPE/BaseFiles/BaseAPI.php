@@ -104,7 +104,7 @@ class BaseAPI{
         $this->updateHomesAndNicks();
     }
 
-    private function updateHomesAndNicks(): void{
+    private final function updateHomesAndNicks(): void{
         if(file_exists($f = $this->getEssentialsPEPlugin()->getDataFolder() . "Homes.yml")){
             $cfg = new Config($f, Config::YAML);
             foreach($cfg->getAll() as $player => $home){
