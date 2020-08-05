@@ -29,6 +29,7 @@ use EssentialsPE\Commands\ItemCommand;
 use EssentialsPE\Commands\ItemDB;
 use EssentialsPE\Commands\Jump;
 use EssentialsPE\Commands\KickAll;
+use EssentialsPE\Commands\Kit;
 use EssentialsPE\Commands\Lightning;
 use EssentialsPE\Commands\More;
 use EssentialsPE\Commands\Mute;
@@ -71,41 +72,27 @@ use EssentialsPE\EventHandlers\OtherEvents;
 use EssentialsPE\EventHandlers\PlayerEvents;
 use EssentialsPE\EventHandlers\SignEvents;
 use EssentialsPE\Events\CreateAPIEvent;
-use JackMD\UpdateNotifier\UpdateNotifier;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
 
 class Loader extends PluginBase{
-
     /** @var BaseAPI */
     private $api;
-    /** @var string */
-    private const version = "0.0.4";
-
-	public function onLoad(): void{
-		// Before anything else...
-		$this->checkConfig();
-
-		UpdateNotifier::checkUpdate($this, $this->getDescription()->getName(), $this->getDescription()->getVersion());
-	}
 
     public function onEnable(): void{
+        // Before anything else...
+        $this->checkConfig();
+
         // Custom API Setup :3
-        $ev = new CreateAPIEvent($this, BaseAPI::class);
-	    try{
-		    $ev->call();
-	    }
-	    catch(\ReflectionException $exception){
-	    	$this->getLogger()->logException($exception);
-	    }
-	    $class = $ev->getClass();
+        $this->getServer()->getPluginManager()->callEvent($ev = new CreateAPIEvent($this, BaseAPI::class));
+        $class = $ev->getClass();
         $this->api = new $class($this);
 
         // Other startup code...
         if(!is_dir($this->getDataFolder())){
             mkdir($this->getDataFolder());
         }
-
+        
         $this->registerEvents();
         $this->registerCommands();
         if(count($p = $this->getServer()->getOnlinePlayers()) > 0){
@@ -151,12 +138,13 @@ class Loader extends PluginBase{
             new Fly($this->getAPI()),
             new GetPos($this->getAPI()),
             new God($this->getAPI()),
-            //new Hat($this->getAPI()), TODO: Implement when MCPE implements "Block-Hat rendering"
+            //new Hat($this->getAPI()), TODO
             new Heal($this->getAPI()),
             new ItemCommand($this->getAPI()),
             new ItemDB($this->getAPI()),
             new Jump($this->getAPI()),
             new KickAll($this->getAPI()),
+            new Kit($this->getAPI()),
             new Lightning($this->getAPI()),
             new More($this->getAPI()),
             new Mute($this->getAPI()),
@@ -182,11 +170,11 @@ class Loader extends PluginBase{
             new Vanish($this->getAPI()),
             new Whois($this->getAPI()),
             new World($this->getAPI()),
-
+		
             // Messages
             new Msg($this->getAPI()),
             new Reply($this->getAPI()),
-
+		
             // Override
             new Gamemode($this->getAPI()),
             new Kill($this->getAPI())
@@ -246,7 +234,7 @@ class Loader extends PluginBase{
 			 $commands[] = $homeCommand;
 		    }
 		}
-
+	    
         $aliased = [];
         foreach($commands as $cmd){
             /** @var BaseCommand $cmd */
@@ -274,10 +262,11 @@ class Loader extends PluginBase{
         if(!file_exists($this->getDataFolder() . "config.yml")){
             $this->saveDefaultConfig();
         }
+        $this->saveResource("Kits.yml");
         $this->saveResource("Warps.yml");
         $cfg = $this->getConfig();
 
-        if(!$cfg->exists("version") || $cfg->get("version") !== self::version){
+        if(!$cfg->exists("version") || $cfg->get("version") !== "0.0.3"){
             $this->getLogger()->debug(TextFormat::RED . "An invalid config file was found, generating a new one...");
             rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.old");
             $this->saveDefaultConfig();

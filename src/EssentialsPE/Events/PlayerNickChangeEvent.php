@@ -51,7 +51,7 @@ class PlayerNickChangeEvent extends BaseCustomEvent implements Cancellable{
      * @return string
      */
     public function getNewNick(): string{
-        return $this->new_nick;
+        return $this->new_nick . "§r";
     }
 
     /**
@@ -69,7 +69,7 @@ class PlayerNickChangeEvent extends BaseCustomEvent implements Cancellable{
      * @param string $nick
      */
     public function setNick(string $nick): void{
-        $this->new_nick = $nick;
+        $this->new_nick = $nick . "§r";
     }
 
     /**

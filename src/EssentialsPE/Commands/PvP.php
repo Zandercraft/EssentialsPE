@@ -33,7 +33,7 @@ class PvP extends BaseCommand{
             $this->sendUsage($sender, $alias);
             return false;
         }
-        $this->getAPI()->setPvP($sender, $s);
+        $this->getAPI()->setPvP($sender, (bool) $s);
         $sender->sendMessage(TextFormat::GREEN . "PvP mode " . ($s ? "enabled" : "disabled"));
         return true;
     }

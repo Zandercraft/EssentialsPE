@@ -90,7 +90,7 @@ class BaseSession{
             $values[$k] = $v;
         }
         $this->config->setAll($values);
-        $this->config->save(true);
+        $this->config->save();
     }
 
     public function onClose(): void{
@@ -384,13 +384,13 @@ class BaseSession{
      */
 
     /** @var bool|string */
-    private $quickReply = false;
+    private $quickReply = 0;
 
     /**
      * @return null|string
      */
-    public function getQuickReply(): ?string{
-        return $this->quickReply;
+    public function getQuickReply(): string{
+        return (string) $this->quickReply;
     }
 
     /**
@@ -401,7 +401,7 @@ class BaseSession{
     }
 
     public function removeQuickReply(): void{
-        $this->quickReply = false;
+        $this->quickReply = "";
     }
 
     /**  __  __       _

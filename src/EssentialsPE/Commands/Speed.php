@@ -8,6 +8,7 @@ use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\BaseFiles\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Effect;
+use pocketmine\entity\EffectInstance;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
@@ -26,7 +27,7 @@ class Speed extends BaseCommand{
 	 * @return bool
 	 */
     public function execute(CommandSender $sender, string $alias, array $args): bool{
-        if($this->testPermission($sender)){
+        if(!$this->testPermission($sender)){
             return false;
         }
         if(!$sender instanceof Player || count($args) < 1){
@@ -44,13 +45,23 @@ class Speed extends BaseCommand{
         }
         if((int) $args[0] === 0){
             $player->removeEffect(Effect::SPEED);
-        }else{
-            $effect = Effect::getEffect(Effect::SPEED);
-            $effect->setAmplifier($args[0]);
-            $effect->setDuration(PHP_INT_MAX);
+            $sender->sendMessage(TextFormat::YELLOW . "Speed removed.");
+
+        } elseif ((int) $args[0] > 127) {
+            $sender->sendMessage(TextFormat::YELLOW . "Speed cannot be higher than 127.");
+            return false;
+
+        } elseif ($player->getEffect(Effect::SPEED)) {
+            $player->removeEffect(Effect::SPEED);
+            $effect = new EffectInstance(Effect::getEffect(Effect::SPEED), INT32_MAX, (int)$args[0]-1, false);
             $player->addEffect($effect);
+            $sender->sendMessage(TextFormat::YELLOW . "Speed re-amplified to " . TextFormat::WHITE . $args[0]);
+
+        } else {
+            $effect = new EffectInstance(Effect::getEffect(Effect::SPEED), INT32_MAX, (int)$args[0]-1, false);
+            $player->addEffect($effect);
+            $sender->sendMessage(TextFormat::YELLOW . "Speed amplified by " . TextFormat::WHITE . $args[0]);
         }
-        $sender->sendMessage(TextFormat::YELLOW . "Speed amplified by " . TextFormat::WHITE . $args[0]);
         return true;
     }
 }

@@ -40,7 +40,7 @@ class Burn extends BaseCommand{
             $sender->sendMessage(TextFormat::RED . "[Error] Invalid burning time");
             return false;
         }
-        $player->setOnFire($time);
+        $player->setOnFire((int) $time);
         $sender->sendMessage(TextFormat::YELLOW . $player->getDisplayName() . " is now on fire!");
         return true;
     }

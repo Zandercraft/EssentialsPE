@@ -48,9 +48,9 @@ class Seen extends BaseCommand{
          * l = Day name
          * j = Day number (1 - 30/31)
          * F = Month name
-         * Y = Year in 4 digits (1999)
+         * Y =  Year in 4 digits (1999)
          */
-        $sender->sendMessage(TextFormat::AQUA .  $player->getName() ." was last seen on " . TextFormat::RED . date("l, F j, Y", ($t = $player->getLastPlayed() / 1000)) . TextFormat::AQUA . " at " . TextFormat::RED . date("h:ia", $t));
+        $sender->sendMessage(TextFormat::AQUA .  $player->getName() ." was last seen on " . TextFormat::RED . date("l, F j, Y", ($t = $player->getLastPlayed())) . TextFormat::AQUA . " at " . TextFormat::RED . date("h:ia", $t));
         return true;
     }
 }

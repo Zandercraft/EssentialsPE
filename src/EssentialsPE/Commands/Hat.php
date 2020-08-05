@@ -45,7 +45,7 @@ class Hat extends BaseCommand{
             }
         }
         $new = Item::get(Item::AIR);
-        $old = $sender->getInventory()->getHelmet();
+        $old = $sender->getArmorInventory()->getHelmet();
         $slot = $sender->getInventory()->canAddItem($old) ? $sender->getInventory()->firstEmpty() : null;
         if(!$remove){
             $new = $sender->getInventory()->getItemInHand();
@@ -53,9 +53,9 @@ class Hat extends BaseCommand{
                 $sender->sendMessage(TextFormat::RED . "[Error] Please specify an item to wear");
                 return false;
             }
-            $slot = $sender->getInventory()->getHeldItemSlot();
+            $slot = $sender->getInventory()->getItemInHand();
         }
-        $sender->getInventory()->setHelmet($new);
+        $sender->getArmorInventory()->setHelmet($new);
         if($slot !== null){
             $sender->getInventory()->setItem($slot, $old);
         }

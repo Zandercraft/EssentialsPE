@@ -40,10 +40,15 @@ class ItemCommand extends BaseCommand{
         }
 
         //Getting the item...
-        $item = $this->getAPI()->getItem($item_name = array_shift($args));
+        try {
+            $item = $this->getAPI()->getItem($item_name = array_shift($args));
 
+        } catch (\InvalidArgumentException $e) {
+            $sender->sendMessage(TextFormat::RED . "[Error] Invalid Item or Item ID");
+            return false;
+        }
         if($item->getId() === Item::AIR){
-            $sender->sendMessage(TextFormat::RED . "Unknown item \"" . $item_name . "\"");
+            $sender->sendMessage(TextFormat::RED . "Cannot Give Air");
             return false;
         }elseif(!$sender->hasPermission("essentials.itemspawn.item-all") && !$sender->hasPermission("essentials.itemspawn.item-" . $item->getName() && !$sender->hasPermission("essentials.itemspawn.item-" . $item->getId()))){
             $sender->sendMessage(TextFormat::RED . "You can't spawn this item");
@@ -52,7 +57,7 @@ class ItemCommand extends BaseCommand{
 
         //Setting the amount...
         $amount = array_shift($args);
-        $item->setCount(isset($amount) && is_numeric($amount) ? $amount : ($sender->hasPermission("essentials.oversizedstacks") ? $this->getPlugin()->getConfig()->get("oversized-stacks") : $item->getMaxStackSize()));
+        $item->setCount(isset($amount) && is_numeric($amount) ? (int) $amount : ($sender->hasPermission("essentials.oversizedstacks") ? $this->getPlugin()->getConfig()->get("oversized-stacks") : $item->getMaxStackSize()));
 
         //Getting other values... TODO
         /*foreach($args as $a){

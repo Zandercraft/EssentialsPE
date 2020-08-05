@@ -15,7 +15,7 @@ class ClearInventory extends BaseCommand{
      * @param BaseAPI $api
      */
     public function __construct(BaseAPI $api){
-        parent::__construct($api, "clearinventory", "Clear your/other's inventory", "[player]", true, ["ci", "clean", "clearinvent"]);
+        parent::__construct($api, "clearinventory", "Clear your/other's inventory", "[player]", true, ["ci", "clear", "clearinvent"]);
         $this->setPermission("essentials.clearinventory.use");
     }
 

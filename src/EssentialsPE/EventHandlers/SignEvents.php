@@ -14,10 +14,9 @@ use pocketmine\tile\Sign;
 use pocketmine\utils\TextFormat;
 
 class SignEvents extends BaseEventHandler{
-	/**
-	 * @param PlayerInteractEvent $event
-	 * @throws \ReflectionException
-	 */
+    /**
+     * @param PlayerInteractEvent $event
+     */
     public function onSignTap(PlayerInteractEvent $event): void{
         $tile = $event->getBlock()->getLevel()->getTile(new Vector3($event->getBlock()->getFloorX(), $event->getBlock()->getFloorY(), $event->getBlock()->getFloorZ()));
         if($tile instanceof Sign){
@@ -75,6 +74,28 @@ class SignEvents extends BaseEventHandler{
                     $event->getPlayer()->sendMessage(TextFormat::GREEN . "You have been healed");
                 }
             }
+            
+            // Kit sign
+            elseif(TextFormat::clean($tile->getText()[0], true) === "[Kit]"){
+                $event->setCancelled(true);
+                if(!$event->getPlayer()->hasPermission("essentials.sign.use.kit")){
+                    $event->getPlayer()->sendMessage(TextFormat::RED . "You don't have permissions to use this sign");
+                }elseif($event->getPlayer()->getGamemode() === 1 || $event->getPlayer()->getGamemode() === 3){
+                    $event->getPlayer()->sendMessage(TextFormat::RED . "[Error] You're in " . $event->getPlayer()->getServer()->getGamemodeString($event->getPlayer()->getGamemode()) . " mode");
+                    return;
+                }else{
+                    if(!($kit = $this->getAPI()->getKit($tile->getText()[1]))){
+                        $event->getPlayer()->sendMessage(TextFormat::RED . "[Error] Kit doesn't exists");
+                        return;
+                    }elseif(!$event->getPlayer()->hasPermission("essentials.kits." . $kit->getName())){
+                        $event->getPlayer()->sendMessage(TextFormat::RED . "[Error] You don't have permissions to get this kit");
+                        return;
+                    }else{
+                        $kit->giveToPlayer($event->getPlayer());
+                        $event->getPlayer()->sendMessage(TextFormat::GREEN . "Getting kit " . TextFormat::AQUA . $kit->getName());
+                    }
+                }
+            }
 
             // Repair sign
             elseif(TextFormat::clean($tile->getText()[0], true) === "[Repair]"){
@@ -86,29 +107,25 @@ class SignEvents extends BaseEventHandler{
                     return;
                }else{
                     if(($v = $tile->getText()[1]) === "Hand"){
-                        $index = $event->getPlayer()->getInventory()->getHeldItemIndex();
-                        $item = $event->getPlayer()->getInventory()->getItem($index);
-                        if($this->getAPI()->isRepairable($item)) {
-                            if($item->getDamage() > 0) {
-                                $event->getPlayer()->getInventory()->setItem($index , $item->setDamage(0));
-                                $event->getPlayer()->sendMessage(TextFormat::GREEN . "Item successfully repaired" . TextFormat::GREEN);
-                            }else{
-                                $event->getPlayer()->sendMessage(TextFormat::RED . "[Error] Item does not have any damage");
-                            }
+                        if($this->getAPI()->isRepairable($item = $event->getPlayer()->getInventory()->getItemInHand())){
+                            $item = $event->getPlayer()->getInventory()->getItemInHand();
+                            $item->setDamage(0);
+                            $event->getPlayer()->getInventory()->setItemInHand($item);
+                            $event->getPlayer()->getInventory()->sendContents($event->getPlayer());
+                            $event->getPlayer()->sendMessage(TextFormat::GREEN . "Item successfully repaired");
                         }
                     }elseif($v === "All"){
-                        foreach($event->getPlayer()->getInventory()->getContents() as $index => $item){
+                        foreach ($event->getPlayer()->getInventory()->getContents() as $index => $item){
                             if($this->getAPI()->isRepairable($item)){
-                                if($item->getDamage() > 0){
-                                    $event->getPlayer()->getInventory()->setItem($index, $item->setDamage(0));
-                                }
+                                $item->setDamage(0);
+                                $event->getPlayer()->getInventory()->setItem($index, $item);
+
                             }
                         }
-                        foreach($event->getPlayer()->getArmorInventory()->getContents() as $index => $item){
+                        foreach ($event->getPlayer()->getArmorInventory()->getContents() as $index => $item){
                             if($this->getAPI()->isRepairable($item)){
-                                if($item->getDamage() > 0){
-                                    $event->getPlayer()->getArmorInventory()->setItem($index, $item->setDamage(0));
-                                }
+                                $item->setDamage(0);
+                                $event->getPlayer()->getArmorInventory()->setItem($index, $item);
                             }
                         }
                         $event->getPlayer()->sendMessage(TextFormat::GREEN . "All the tools on your inventory were repaired" . TextFormat::AQUA . "\n(including the equipped Armor)");
@@ -124,10 +141,10 @@ class SignEvents extends BaseEventHandler{
                }else{
                     if(($v = $tile->getText()[1]) === "Day"){
                         $event->getPlayer()->getLevel()->setTime(0);
-                        $event->getPlayer()->sendMessage(TextFormat::GREEN . "Time set to \"Day\"" . TextFormat::GREEN);
+                        $event->getPlayer()->sendMessage(TextFormat::GREEN . "Time set to \"Day\"");
                     }elseif($v === "Night"){
                         $event->getPlayer()->getLevel()->setTime(12500);
-                        $event->getPlayer()->sendMessage(TextFormat::GREEN . "Time set to \"Night\"" . TextFormat::GREEN);
+                        $event->getPlayer()->sendMessage(TextFormat::GREEN . "Time set to \"Night\"");
                     }
                 }
             }
@@ -159,7 +176,7 @@ class SignEvents extends BaseEventHandler{
                         return;
                     }
                     $event->getPlayer()->teleport($warp);
-                    $event->getPlayer()->sendMessage(TextFormat::GREEN . "Warping to " . $tile->getText()[1] . TextFormat::GREEN);
+                    $event->getPlayer()->sendMessage(TextFormat::GREEN . "Warping to " . $tile->getText()[1]);
                 }
             }
         }
@@ -173,7 +190,7 @@ class SignEvents extends BaseEventHandler{
     public function onBlockBreak(BlockBreakEvent $event): void{
         $tile = $event->getBlock()->getLevel()->getTile(new Vector3($event->getBlock()->getFloorX(), $event->getBlock()->getFloorY(), $event->getBlock()->getFloorZ()));
         if($tile instanceof Sign){
-            $key = ["Free", "Gamemode", "Heal", "Repair", "Time", "Teleport", "Warp"];
+            $key = ["Free", "Gamemode", "Heal", "Kit", "Repair", "Time", "Teleport", "Warp"];
             foreach($key as $k){
                 if(TextFormat::clean($tile->getText()[0], true) === "[" . $k . "]" && !$event->getPlayer()->hasPermission("essentials.sign.break." . strtolower($k))){
                     $event->setCancelled(true);
@@ -183,11 +200,10 @@ class SignEvents extends BaseEventHandler{
             }
         }
     }
-	
-	/**
-	 * @param SignChangeEvent $event
-	 * @throws \ReflectionException
-	 */
+
+    /**
+     * @param SignChangeEvent $event
+     */
     public function onSignChange(SignChangeEvent $event): void{
         // Special Signs
         // Free sign
@@ -251,6 +267,16 @@ class SignEvents extends BaseEventHandler{
         elseif(strtolower(TextFormat::clean($event->getLine(0), true)) === "[heal]" && $event->getPlayer()->hasPermission("essentials.sign.create.heal")){
             $event->getPlayer()->sendMessage(TextFormat::GREEN . "Heal sign successfully created!");
             $event->setLine(0, TextFormat::AQUA . "[Heal]");
+        }
+
+        // Kit sign
+        elseif(strtolower(TextFormat::clean($event->getLine(0), true)) === "[kit]" && $event->getPlayer()->hasPermission("essentials.sign.create.kit")){
+            if(!$this->getAPI()->kitExists($event->getLine(1))){
+                $event->getPlayer()->sendMessage(TextFormat::RED . "[Error] Kit doesn't exist");
+                return;
+            }
+            $event->getPlayer()->sendMessage(TextFormat::GREEN . "Kit sign successfully created!");
+            $event->setLine(0, TextFormat::AQUA . "[Kit]");
         }
 
         // Repair sign

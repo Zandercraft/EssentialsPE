@@ -21,7 +21,6 @@ use EssentialsPE\Tasks\TPRequestTask;
 use pocketmine\block\Block;
 use pocketmine\command\CommandSender;
 use pocketmine\entity\Effect;
-use pocketmine\entity\EffectInstance;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\PrimedTNT;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -52,13 +51,15 @@ use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
-
 class BaseAPI{
     /** @var Loader */
     private $ess;
     /** @var BaseAPI */
     private static $instance;
-    
+
+    /** @var Config */
+    /** @var array */
+    private $kits = [];
     /** @var array */
     private $warps = [];
 
@@ -98,11 +99,12 @@ class BaseAPI{
     }
 
     private final function saveConfigs(): void{
+        $this->loadKits();
         $this->loadWarps();
         $this->updateHomesAndNicks();
     }
 
-    private final function updateHomesAndNicks(): void{
+    private function updateHomesAndNicks(): void{
         if(file_exists($f = $this->getEssentialsPEPlugin()->getDataFolder() . "Homes.yml")){
             $cfg = new Config($f, Config::YAML);
             foreach($cfg->getAll() as $player => $home){
@@ -128,7 +130,20 @@ class BaseAPI{
         }
     }
 
-    private final function loadWarps(): void{
+    private function loadKits(): void{
+        $parent = new Permission("essentials.kits");
+        $this->getServer()->getPluginManager()->addPermission($parent);
+
+        $cfg = new Config($this->getEssentialsPEPlugin()->getDataFolder() . "Kits.yml", Config::YAML);
+        foreach($cfg->getAll() as $n => $i){
+            $this->kits[$n] = new BaseKit($n, $i);
+            $child = new Permission("essentials.kits." . $n);
+            $child->addParent($parent, true);
+            $this->getServer()->getPluginManager()->addPermission($child);
+        }
+    }
+
+    private function loadWarps(): void{
         $parent = new Permission("essentials.warps", null, null);
         $this->getServer()->getPluginManager()->addPermission($parent);
 
@@ -166,6 +181,7 @@ class BaseAPI{
 
     public function reloadFiles(): void{
         $this->getEssentialsPEPlugin()->getConfig()->reload();
+        $this->loadKits();
         $this->loadWarps();
         $this->updateHomesAndNicks();
     }
@@ -351,19 +367,19 @@ class BaseAPI{
         if($block === null){
             return false;
         }
-        $this->createTNT($block->add(0, 1), $player->getLevel());
+        $this->createTNT($block->add(0, 1, 0), $player->getLevel());
         return true;
     }
 
     /**
-     * Spawn a carpet of bomb!
+     * Spawn a mass of tnt above!
      *
      * @param Player $player
      */
     public function nuke(Player $player): void{
         for($x = -10; $x <= 10; $x += 5){
             for($z = -10; $z <= 10; $z += 5){
-                $this->createTNT($player->add($x, 0, $z), $player->getLevel());
+                $this->createTNT($player->add($x, 50, $z), $player->getLevel());
             }
         }
     }
@@ -688,45 +704,45 @@ class BaseAPI{
      *   _| |_| ||  __| | | | | \__ \
      *  |_____|\__\___|_| |_| |_|___/
      */
-	/**
-	 * Easy get an item by name and metadata.
-	 * The way this function understand the information about the item is:
-	 * 'ItemNameOrID:Metadata' - Example (Granite block item):
-	 *      '1:1' - or - 'stone:1'
-	 *
-	 * @param string $item_name
-	 * @return Item|ItemBlock
-	 * @throws \ReflectionException
-	 */
-    public function getItem(string $item_name): Item{
-        if(strpos($item_name, ":") !== false){
+
+    /**
+     * Easy way to get an item by name and metadata.
+     * The way this function understand the information about the item is:
+     * 'ItemNameOrID:Metadata' - Example (Granite block item):
+     *      '1:1' - or - 'stone:1'
+     *
+     * @param string $item_name
+     * @return Item|ItemBlock
+     */
+    public function getItem(string $item_name): Item
+    {
+        if (strpos($item_name, ":") !== false) {
             $v = explode(":", $item_name);
             $item_name = $v[0];
-            $damage = (int) $v[1];
-        }else{
+            $damage = (int)$v[1];
+        } else {
             $damage = 0;
         }
-
         if(!is_numeric($item_name)){
             $item = Item::fromString($item_name);
-	        if(strtolower($item_name) !== "air" && $item->getId() === Item::AIR) {
-		        $item = $this->readableNameToItem($item_name);
-	        }
+            if(strtolower($item_name) !== "air" && $item->getId() === Item::AIR) {
+                $item = $this->readableNameToItem($item_name);
+            }
         }else{
-            $item = Item::get($item_name);
+            $item = Item::get((int)$item_name);
         }
         $item->setDamage($damage);
 
         return $item;
     }
-	
+
+
 	/**
 	 * Returns a name of an item using the class constants of the Item class.
 	 * This name is not equal to the getName() function from Item classes.
 	 *
 	 * @param Item $item
 	 * @return string|null
-	 * @throws \ReflectionException
 	 */
 	public function getReadableName(Item $item): string{
 	    $itemClass = new \ReflectionClass("pocketmine\\item\\Item");
@@ -743,13 +759,12 @@ class BaseAPI{
 		}
 		return implode(" ", $finalItemName);
 	}
-	
+
 	/**
 	 * Converts the readable item name (made using function above) to an Item object.
 	 *
 	 * @param string $item_name
 	 * @return Item
-	 * @throws \ReflectionException
 	 */
 	public function readableNameToItem(string $item_name): Item{
 		$itemClass = new \ReflectionClass("pocketmine\\item\\Item");
@@ -866,6 +881,54 @@ class BaseAPI{
      */
     public function canBeCondensed(Item $item): bool{
         return isset($this->condenseShapes[0][$item->getId()]) || isset($this->condenseShapes[1][$item->getId()]);
+    }
+
+    /**  _  ___ _
+     *  | |/ (_| |
+     *  | ' / _| |_ ___
+     *  |  < | | __/ __|
+     *  | . \| | |_\__ \
+     *  |_|\_|_|\__|___/
+     */
+
+    /**
+     * Check if a kit exists
+     *
+     * @param string $kit
+     * @return bool
+     */
+    public function kitExists(string $kit): bool{
+        return $this->validateName($kit, false) && isset($this->kits[$kit]);
+    }
+
+    /**
+     * Return the contents of a kit, if existent
+     *
+     * @param string $kit
+     * @return bool|BaseKit
+     */
+    public function getKit(string $kit): ?BaseKit{
+        if(!$this->kitExists($kit)){
+            return null;
+        }
+        return $this->kits[$kit];
+    }
+
+    /**
+     * Get a list of all available kits
+     *
+     * @param bool $inArray
+     * @return array|bool|string
+     */
+    public function kitList(bool $inArray = false){
+        $list = array_keys($this->kits);
+        if(count($list) < 1){
+            return false;
+        }
+        if(!$inArray){
+            return implode(", ", $list);
+        }
+        return $list;
     }
 
     /**  __  __
@@ -1189,7 +1252,6 @@ class BaseAPI{
         }
         return $found;
     }
-
     /**
      * Let you search for a player using his Display name(Nick) or Real name
      * Instead of returning false, this method will create an OfflinePlayer object.
@@ -1198,9 +1260,9 @@ class BaseAPI{
      *
      * @return IPlayer|Player|OfflinePlayer
      */
-    public function getOfflinePlayer(string $name): IPlayer{
-        $player = $this->getPlayer($name);
-        if($player === false){
+    public function getOfflinePlayer(string $name): IPlayer {
+        $player = $this->getServer()->getPlayer($name);
+        if($player === null){
             $player = new OfflinePlayer($this->getServer(), strtolower($name));
         }
         return $player;
@@ -1612,17 +1674,17 @@ class BaseAPI{
         }
         return true;
     }
-	
-	/**
-	 * Return an array with the following values:
-	 * 0 => Timestamp integer
-	 * 1 => The rest of the string (removing any "space" between time codes)
-	 *
-	 * @param string $string
-	 * @return array|null
-	 * @throws \Exception
-	 */
-	public function stringToTimestamp(string $string): ?array{
+
+    /**
+     * Return an array with the following values:
+     * 0 => Timestamp integer
+     * 1 => The rest of the string (removing any "space" between time codes)
+     *
+     * @param string $string
+     *
+     * @return array|null
+     */
+    public function stringToTimestamp(string $string): ?array{
         /**
          * Rules:
          * Integers without suffix are considered as seconds
@@ -1864,7 +1926,7 @@ class BaseAPI{
      *      \/ \__,_|_| |_|_|___|_| |_|
      */
 
-    /** @var Effect|null */
+    /** @var null|Effect */
     private $invisibilityEffect = null;
 
     /**
@@ -1899,10 +1961,6 @@ class BaseAPI{
      * @return bool
      */
     public function setVanish(Player $player, bool $state, bool $noPacket = false): bool{
-        if($this->invisibilityEffect === null){
-            $effect = new EffectInstance(Effect::getEffect(Effect::INVISIBILITY), INT32_MAX, 0, false);
-            $this->invisibilityEffect = $effect;
-        }
         $this->getServer()->getPluginManager()->callEvent($ev = new PlayerVanishEvent($this, $player, $state, $noPacket));
         if($ev->isCancelled()){
             return false;
@@ -1910,42 +1968,11 @@ class BaseAPI{
         $state = $ev->willVanish();
         $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_INVISIBLE, $state);
         $player->setNameTagVisible(!$state);
-        /** @var Player[] $pl */
-        $pl = [];
         foreach($player->getLevel()->getPlayers() as $p){
-            if($state || (!$state && !in_array($p->getName(), $ev->getHiddenFor(), true))){
-                $pl[] = $p;
-            }
-        }
-        $noPacket = $ev->noPacket();
-        if($this->isVanished($player) && $ev->noPacket() !== ($priority = $this->hasNoPacket($player))){
-            $noPacket = $priority;
-        }
-        if(!$noPacket){
-            if(!$state){
-                $pk = new MobEffectPacket();
-                $pk->entityRuntimeId = $player->getId();
-                $pk->eventId = MobEffectPacket::EVENT_REMOVE;
-                $pk->effectId = $this->invisibilityEffect->getId();
-            }else{
-                $pk = new MobEffectPacket();
-                $pk->entityRuntimeId = $player->getId();
-                $pk->effectId = $this->invisibilityEffect->getId();
-                $pk->amplifier = $this->invisibilityEffect->getAmplifier();
-                $pk->particles = $this->invisibilityEffect->isVisible();
-                $pk->duration = $this->invisibilityEffect->getDuration();
-                $pk->eventId = MobEffectPacket::EVENT_ADD;
-            }
-            $this->getServer()->broadcastPacket($pl, $pk);
-        }else{
-            if(!$state){
-                foreach($pl as $p){
-                    $p->showPlayer($player);
-                }
-            }else{
-                foreach($pl as $p){
-                    $p->hidePlayer($player);
-                }
+            if (!$this->isVanished($player)) {
+                $p->hidePlayer($player);
+            } else {
+                $p->showPlayer($player);
             }
         }
         $this->getSession($player)->setVanish($state, !$state ? $ev->noPacket() : $noPacket);
@@ -1964,14 +1991,6 @@ class BaseAPI{
         return true;
     }
 
-    /**
-     * Allow to switch between levels Vanished!
-     * You need to teleport the player to a different level in order to call this event
-     *
-     * @param Player $player
-     * @param Level $origin
-     * @param Level $target
-     */
     public function switchLevelVanish(Player $player, Level $origin, Level $target): void{
         if($origin !== $target && $this->isVanished($player)){
 
@@ -1982,9 +2001,8 @@ class BaseAPI{
             // Just as prevention if any player has "noPacket" disabled...
             $pk = new MobEffectPacket();
             $pk->effectId = $this->invisibilityEffect->getId();
-            $pk->amplifier = $this->invisibilityEffect->getAmplifier();
-            $pk->particles = $this->invisibilityEffect->isVisible();
-            $pk->duration = $this->invisibilityEffect->getDuration();
+            $pk->particles = $this->invisibilityEffect->hasBubbles();
+            $pk->duration = $this->invisibilityEffect->getDefaultDuration();
 
             // Show to origin's players
             $pk->eventId = MobEffectPacket::EVENT_REMOVE;

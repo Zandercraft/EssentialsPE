@@ -10,6 +10,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
+
 class Repair extends BaseCommand{
     /**
      * @param BaseAPI $api
@@ -33,7 +34,7 @@ class Repair extends BaseCommand{
             $this->sendUsage($sender, $alias);
             return false;
         }
-        $a = "hand";
+        $a = "";
         if(isset($args[0])) {
             $a = strtolower($args[0]);
         }
@@ -48,34 +49,29 @@ class Repair extends BaseCommand{
             }
             foreach($sender->getInventory()->getContents() as $index => $item){
                 if($this->getAPI()->isRepairable($item)){
-                    if($item->getDamage() > 0){
-                        $sender->getInventory()->setItem($index, $item->setDamage(0));
-                    }
+                    $item->setDamage(0);
+                    $sender->getInventory()->setItem($index, $item);
                 }
             }
             $m = TextFormat::GREEN . "All the tools in your inventory were repaired!";
             if($sender->hasPermission("essentials.repair.armor")){
                 foreach($sender->getArmorInventory()->getContents() as $index => $item){
                     if($this->getAPI()->isRepairable($item)){
-                        if($item->getDamage() > 0){
-                            $sender->getArmorInventory()->setItem($index, $item->setDamage(0));
-                        }
+                        $item->setDamage(0);
+                        $sender->getArmorInventory()->setItem($index, $item);
                     }
                 }
                 $m .= TextFormat::AQUA . " (Including the equipped Armor)";
             }
         }else{
-            $index = $sender->getInventory()->getHeldItemIndex();
-            $item = $sender->getInventory()->getItem($index);
-            if(!$this->getAPI()->isRepairable($item)){
+            if(!$this->getAPI()->isRepairable($sender->getInventory()->getItemInHand())){
                 $sender->sendMessage(TextFormat::RED . "[Error] This item can't be repaired!");
                 return false;
             }
-            if($item->getDamage() > 0){
-                $sender->getInventory()->setItem($index, $item->setDamage(0));
-            }else{
-                $sender->sendMessage(TextFormat::RED . "[Error] Item does not have any damage");
-            }
+            $item = $sender->getInventory()->getItemInHand();
+            $item->setDamage(0);
+            $sender->getInventory()->setItemInHand($item);
+            $sender->getInventory()->sendContents($sender);
             $m = TextFormat::GREEN . "Item successfully repaired!";
         }
         $sender->sendMessage($m);
