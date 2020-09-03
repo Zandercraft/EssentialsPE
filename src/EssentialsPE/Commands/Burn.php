@@ -14,7 +14,7 @@ class Burn extends BaseCommand{
      * @param BaseAPI $api
      */
     public function __construct(BaseAPI $api){
-        parent::__construct($api, "burn", "Set a player on fire", "<player> <seconds>");
+        parent::__construct($api, "burn", "Set a player on fire", "<seconds> [player]");
         $this->setPermission("essentials.burn");
     }
 
@@ -28,20 +28,30 @@ class Burn extends BaseCommand{
         if(!$this->testPermission($sender)){
             return false;
         }
-        if(count($args) !== 2){
+        if(count($args) > 2){
             $this->sendUsage($sender, $alias);
             return false;
         }
-        if(!($player = $this->getAPI()->getPlayer($args[0]))){
-            $sender->sendMessage(TextFormat::RED . "[Error] Player not found");
-            return false;
-        }
-        if(!is_numeric($time = $args[1])){
+        if(!is_numeric($time = $args[0])) {
             $sender->sendMessage(TextFormat::RED . "[Error] Invalid burning time");
             return false;
         }
-        $player->setOnFire((int) $time);
-        $sender->sendMessage(TextFormat::YELLOW . $player->getDisplayName() . " is now on fire!");
-        return true;
+        if(count($args) === 2 && !($player = $this->getAPI()->getPlayer($args[1]))){
+                $sender->sendMessage(TextFormat::RED . "[Error] Player not found");
+                return false;
+        }
+        if(count($args) === 1) {
+            $player = $this->getAPI()->getPlayer($sender->getName());
+            $player->setOnFire((int) $time);
+            $sender->sendMessage(TextFormat::YELLOW . $player->getDisplayName() . " is now on fire!");
+            return true;
+
+        }
+        if(($player = $this->getAPI()->getPlayer($args[1]))) {
+            $player->setOnFire((int) $time);
+            $sender->sendMessage(TextFormat::YELLOW . $player->getDisplayName() . " is now on fire!");
+            return true;
+
+        }
     }
 }

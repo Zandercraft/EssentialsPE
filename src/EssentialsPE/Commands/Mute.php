@@ -41,6 +41,8 @@ class Mute extends BaseCommand{
             return false;
         }
         /** @var \DateTime $date */
+        $tz = $this->getAPI()->getEssentialsPEPlugin()->getConfig()->get("timezone");
+        date_default_timezone_set($tz);
         $date = null;
         if(!is_bool($info = $this->getAPI()->stringToTimestamp(implode(" ", $args)))){
             $date = $info[0];

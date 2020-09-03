@@ -36,3 +36,6 @@ near-default-radius: 200
 
 # This option let you enable color codes in the server, but keep in mind that the client may not support them
 enable-custom-colors: false
+
+# This lets you set your default timezone (Find what to put in here on this website: https://www.php.net/manual/en/timezones.php)
+timezone: America/Toronto

@@ -24,6 +24,7 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\PrimedTNT;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\inventory\BaseInventory;
 use pocketmine\IPlayer;
 use pocketmine\item\Armor;
@@ -349,6 +350,7 @@ class BaseAPI{
     public function removePlayerLastPosition(Player $player): void{
         $this->getSession($player)->removeLastPosition();
     }
+
 
     /**  ______       _   _ _   _
      *  |  ____|     | | (_| | (_)
@@ -871,7 +873,7 @@ class BaseAPI{
         if($condensed->getId() === Item::AIR){
             return null;
         }
-        $item->setCount($item->getCount() - ($count * $shape));
+         $item->setCount((int)($item->getCount() - ($count * $shape)));
         return $condensed;
     }
 

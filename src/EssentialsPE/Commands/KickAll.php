@@ -34,7 +34,7 @@ class KickAll extends BaseCommand{
             return false;
         }
         if(count($args) < 1){
-            $reason = "Unknown";
+            $reason = "You and many others: Kicked by operator.";
         }else{
             $reason = implode(" ", $args);
         }
@@ -43,7 +43,7 @@ class KickAll extends BaseCommand{
                 $p->kick($reason, false);
             }
         }
-        $sender->sendMessage(TextFormat::AQUA . "Kicked all the players!");
+        $sender->sendMessage(TextFormat::AQUA . "Kicked all players!");
         return true;
     }
 }

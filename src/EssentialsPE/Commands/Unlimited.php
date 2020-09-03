@@ -44,7 +44,7 @@ class Unlimited extends BaseCommand{
             }
         }
         if(($gm = $player->getGamemode()) === Player::CREATIVE || $gm === Player::SPECTATOR){
-            $sender->sendMessage(TextFormat::RED . "[Error] " . ($player === $sender ? "you are" : $player->getDisplayName() . " is") . " in " . $this->getAPI()->getServer()->getGamemodeString($gm) . " mode");
+            $sender->sendMessage(TextFormat::RED . "[Error] " . ($player === $sender ? "you are" : $player->getDisplayName() . " is") . " in " . $this->getAPI()->getServer()->getGamemodeString($gm));
             return false;
         }
         $this->getAPI()->switchUnlimited($player);

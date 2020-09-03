@@ -50,7 +50,9 @@ class Seen extends BaseCommand{
          * F = Month name
          * Y =  Year in 4 digits (1999)
          */
-        $sender->sendMessage(TextFormat::AQUA .  $player->getName() ." was last seen on " . TextFormat::RED . date("l, F j, Y", ($t = $player->getLastPlayed())) . TextFormat::AQUA . " at " . TextFormat::RED . date("h:ia", $t));
+        $tz = $this->getAPI()->getEssentialsPEPlugin()->getConfig()->get("timezone");
+        date_default_timezone_set($tz);
+        $sender->sendMessage(TextFormat::AQUA .  $player->getName() ." was last seen on " . TextFormat::RED . date("l, F j, Y", ($t = (int)($player->getLastPlayed() / 1000))) . TextFormat::AQUA . " at " . TextFormat::RED . date("h:ia", $t));
         return true;
     }
 }

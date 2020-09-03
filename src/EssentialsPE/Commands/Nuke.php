@@ -44,6 +44,7 @@ class Nuke extends BaseCommand{
             }
         }
         $this->getAPI()->nuke($player);
+        $sender->sendMessage(TextFormat::DARK_PURPLE . "May death rain upon them.");
         return true;
     }
 } 

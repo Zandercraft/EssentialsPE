@@ -30,12 +30,12 @@ class More extends BaseCommand{
         if(!$this->testPermission($sender)){
             return false;
         }
-        if(!$sender instanceof Player || count($args) !== 1){
+        if(!$sender instanceof Player){
             $this->sendUsage($sender, $alias);
             return false;
         }
         if(($gm = $sender->getGamemode()) === Player::CREATIVE || $gm === Player::SPECTATOR){
-            $sender->sendMessage(TextFormat::RED . "[Error] You're in " . $this->getAPI()->getServer()->getGamemodeString($gm) . " mode");
+            $sender->sendMessage(TextFormat::RED . "[Error] You're in " . $this->getAPI()->getServer()->getGamemodeString($gm));
             return false;
         }
         $item = $sender->getInventory()->getItemInHand();

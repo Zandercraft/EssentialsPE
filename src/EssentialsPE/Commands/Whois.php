@@ -32,7 +32,7 @@ class Whois extends BaseCommand{
             $this->sendUsage($sender, $alias);
             return false;
         }
-        if(!($player = $this->getAPI()->getPlayer($alias[0]))){
+        if(!($player = $this->getAPI()->getPlayer($args[0]))){
             $sender->sendMessage(TextFormat::RED . "[Error] Player not found");
             return false;
         }

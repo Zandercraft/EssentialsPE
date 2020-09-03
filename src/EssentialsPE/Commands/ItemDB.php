@@ -42,6 +42,8 @@ class ItemDB extends BaseCommand{
                 $m = TextFormat::AQUA . "This item is named: " . TextFormat::RED . $item->getName();
                 break;
             default:
+                $this->sendUsage($sender, $alias);
+                return false;
             case "id":
                 $m = TextFormat::AQUA . "This item ID is: " . TextFormat::RED . $item->getId();
                 break;

@@ -15,7 +15,7 @@ class Sudo extends BaseCommand{
      * @param BaseAPI $api
      */
     public function __construct(BaseAPI $api){
-        parent::__construct($api, "sudo", "Run a command as another player", "<player> <command line|c:<chat message>");
+        parent::__construct($api, "sudo", "Run a command as another player", "<player> <chat message>| /<command>");
         $this->setPermission("essentials.sudo.use");
     }
 
@@ -42,15 +42,15 @@ class Sudo extends BaseCommand{
         }
 
         $v = implode(" ", $args);
-        if(substr($v, 0, 2) === "c:"){
+        if(substr($v, 0, 1) === "/"){
+            $sender->sendMessage(TextFormat::AQUA . "Command ran as " .  $player->getDisplayName());
+            $this->getAPI()->getServer()->dispatchCommand($player, substr($v, 1));
+        }else{
             $sender->sendMessage(TextFormat::GREEN . "Sending message as " .  $player->getDisplayName());
-            $this->getAPI()->getServer()->getPluginManager()->callEvent($ev = new PlayerChatEvent($player, substr($v, 2)));
+            $this->getAPI()->getServer()->getPluginManager()->callEvent($ev = new PlayerChatEvent($player, substr($v, 0)));
             if(!$ev->isCancelled()){
                 $this->getAPI()->getServer()->broadcastMessage($this->getAPI()->getServer()->getLanguage()->translateString($ev->getFormat(), [$ev->getPlayer()->getDisplayName(), $ev->getMessage()]), $ev->getRecipients());
             }
-        }else{
-            $sender->sendMessage(TextFormat::AQUA . "Command ran as " .  $player->getDisplayName());
-            $this->getAPI()->getServer()->dispatchCommand($player, $v);
         }
         return true;
     }

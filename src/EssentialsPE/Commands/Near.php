@@ -8,6 +8,7 @@ use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\BaseFiles\BaseCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
+use pocketmine\math\Vector3;
 use pocketmine\utils\TextFormat;
 
 class Near extends BaseCommand{
@@ -29,7 +30,7 @@ class Near extends BaseCommand{
         if(!$this->testPermission($sender)){
             return false;
         }
-        if((!isset($args[0]) || !$sender instanceof Player) || count($args) > 1){
+        if((!$sender instanceof Player) || count($args) > 1){
             $this->sendUsage($sender, $alias);
             return false;
         }
@@ -43,13 +44,14 @@ class Near extends BaseCommand{
                 return false;
             }
         }
+        $nearm = new Vector3($player->x,  $player->y, $player->z);
         $who = $player === $sender ? "you" : $player->getDisplayName();
         if(count($near = $this->getAPI()->getNearPlayers($player)) < 1){
-            $m = TextFormat::GRAY . "** There are no players near to " . $who . TextFormat::GRAY . "! **";
+            $m = TextFormat::GRAY . "* There are no players near to " . $who . TextFormat::GRAY . "! *";
         }else{
             $m = TextFormat::YELLOW . "** There " . (count($near) > 1 ? "are " : "is ") . TextFormat::AQUA . count($near) . TextFormat::YELLOW . " player" . (count($near) > 1 ? "s " : " ") . "near to " . $who . TextFormat::YELLOW . ":";
             foreach($near as $p){
-                $m .= TextFormat::YELLOW . "\n* " . TextFormat::RESET . $p->getDisplayName();
+                $m .= TextFormat::YELLOW . "\n* " . TextFormat::RESET . $p->getDisplayName() . TextFormat::YELLOW . " [" . substr((string)$p->distance($nearm), 0, 5) . "m]";
             }
         }
         $sender->sendMessage($m);
