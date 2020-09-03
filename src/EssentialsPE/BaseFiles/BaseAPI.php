@@ -24,7 +24,6 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\PrimedTNT;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\inventory\BaseInventory;
 use pocketmine\IPlayer;
 use pocketmine\item\Armor;
@@ -873,7 +872,7 @@ class BaseAPI{
         if($condensed->getId() === Item::AIR){
             return null;
         }
-         $item->setCount((int)($item->getCount() - ($count * $shape)));
+        $item->setCount((int)($item->getCount() - ($count * $shape)));
         return $condensed;
     }
 
