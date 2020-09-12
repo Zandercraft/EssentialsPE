@@ -1,6 +1,6 @@
 name: EssentialsPE
 main: EssentialsPE\Loader
-version: 2.0.1
+version: 2.0.2
 api: 3.0.0
 author: LegendsOfMCPE Team
 website: https://github.com/LegendOfMCPE/EssentialsPE
@@ -93,6 +93,9 @@ permissions:
             essentials.essentials:
                 default: op
                 description: "See the current Essentials version"
+            essentials.exp:
+                default: op
+                description: "Give experience to yourself or others"
             essentials.extinguish:
                 default: false
                 description: "Extinguish a player"

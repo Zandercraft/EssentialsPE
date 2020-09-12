@@ -18,6 +18,7 @@ use EssentialsPE\Commands\Condense;
 use EssentialsPE\Commands\Depth;
 use EssentialsPE\Commands\Feed;
 use EssentialsPE\Commands\Extinguish;
+use EssentialsPE\Commands\Exp;
 use EssentialsPE\Commands\Fly;
 use EssentialsPE\Commands\GetPos;
 use EssentialsPE\Commands\God;
@@ -134,6 +135,7 @@ class Loader extends PluginBase{
             new Compass($this->getAPI()),
             new Condense($this->getAPI()),
             new Depth($this->getAPI()),
+            new Exp($this->getAPI()),
             new Extinguish($this->getAPI()),
             new Fly($this->getAPI()),
             new GetPos($this->getAPI()),

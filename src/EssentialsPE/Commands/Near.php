@@ -47,11 +47,11 @@ class Near extends BaseCommand{
         $nearm = new Vector3($player->x,  $player->y, $player->z);
         $who = $player === $sender ? "you" : $player->getDisplayName();
         if(count($near = $this->getAPI()->getNearPlayers($player)) < 1){
-            $m = TextFormat::GRAY . "* There are no players near to " . $who . TextFormat::GRAY . "! *";
+            $m = TextFormat::GRAY . "*There are no players near " . $who . TextFormat::GRAY . "!*";
         }else{
             $m = TextFormat::YELLOW . "** There " . (count($near) > 1 ? "are " : "is ") . TextFormat::AQUA . count($near) . TextFormat::YELLOW . " player" . (count($near) > 1 ? "s " : " ") . "near to " . $who . TextFormat::YELLOW . ":";
             foreach($near as $p){
-                $m .= TextFormat::YELLOW . "\n* " . TextFormat::RESET . $p->getDisplayName() . TextFormat::YELLOW . " [" . substr((string)$p->distance($nearm), 0, 5) . "m]";
+                $m .= TextFormat::YELLOW . "\n* " . TextFormat::RESET . $p->getDisplayName() . " :" . TextFormat::YELLOW . " [" . substr((string)$p->distance($nearm), 0, 5) . "m]";
             }
         }
         $sender->sendMessage($m);
