@@ -1,9 +1,9 @@
 name: EssentialsPE
 main: EssentialsPE\Loader
-version: 2.0.2
+version: 2.0.3
 api: 3.0.0
 author: LegendsOfMCPE Team
-website: https://github.com/LegendOfMCPE/EssentialsPE
+website: https://github.com/Zandercraft/EssentialsPE
 
 permissions:
     essentials:
