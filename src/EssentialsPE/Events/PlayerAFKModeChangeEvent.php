@@ -13,13 +13,13 @@ class PlayerAFKModeChangeEvent extends BaseCustomEvent implements Cancellable{
     public static $handlerList = null;
 
     /** @var Player */
-    protected $player;
+    protected Player $player;
     /** @var bool */
-    protected $isAFK;
+    protected bool $isAFK;
     /** @var bool */
-    protected $mode;
+    protected bool $mode;
     /** @var bool */
-    protected $broadcast;
+    protected bool $broadcast;
 
     /**
      * @param BaseAPI $api

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace EssentialsPE\EventHandlers;
 
+use DateTime;
 use EssentialsPE\BaseFiles\BaseEventHandler;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -61,7 +62,7 @@ class PlayerEvents extends BaseEventHandler{
             }
         }
         $i = $this->getAPI()->getMutedUntil($event->getPlayer());
-        if($i instanceof \DateTime && $event->getPlayer()->hasPermission("essentials.mute.notify")){
+        if($i instanceof DateTime && $event->getPlayer()->hasPermission("essentials.mute.notify")){
             $event->getPlayer()->sendMessage(TextFormat::YELLOW . "Remember that you're muted until " . TextFormat::AQUA . $i->format("l, F j, Y") . TextFormat::YELLOW . " at " . TextFormat::AQUA . $i->format("h:ia"));
         }
         //$this->getAPI()->setPlayerBalance($event->getPlayer(), $this->getAPI()->getDefaultBalance()); TODO
@@ -100,7 +101,7 @@ class PlayerEvents extends BaseEventHandler{
             }elseif(($t = $this->getAPI()->getMutedUntil($event->getPlayer())) === null){
                 $event->setCancelled(true);
             }else{
-                $t2 = new \DateTime();
+                $t2 = new DateTime();
                 if($t < $t2){
                     $this->getAPI()->setMute($event->getPlayer(), false, null, false);
                 }else{

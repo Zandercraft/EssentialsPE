@@ -53,7 +53,6 @@ class Gamemode extends BaseOverrideCommand{
                     break;
                 default:
                     return false;
-                    break;
             }
         }
         if(count($args) < 1 || (!($player = $sender) instanceof Player && !isset($args[1]))){
@@ -84,7 +83,6 @@ class Gamemode extends BaseOverrideCommand{
                 default:
                     $sender->sendMessage(TextFormat::RED . "[Error] Please specify a valid gamemode");
                     return false;
-                    break;
             }
         }else{
             switch(strtolower($args[0])){
@@ -110,7 +108,6 @@ class Gamemode extends BaseOverrideCommand{
                 default:
                     $sender->sendMessage(TextFormat::RED . "[Error] Please specify a valid gamemode");
                     return false;
-                    break;
             }
         }
         $gmString = $this->getAPI()->getServer()->getGamemodeString($gm);

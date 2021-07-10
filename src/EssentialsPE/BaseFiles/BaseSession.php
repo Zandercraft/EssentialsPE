@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace EssentialsPE\BaseFiles;
 
+use DateTime;
 use EssentialsPE\Loader;
 use pocketmine\command\CommandSender;
 use pocketmine\level\Location;
@@ -12,13 +13,13 @@ use pocketmine\utils\Config;
 
 class BaseSession{
     /** @var BaseAPI */
-    private $api;
+    private BaseAPI $api;
     /** @var Player */
-    private $player;
+    private Player $player;
     /** @var Config */
-    private $config;
+    private Config $config;
     /** @var array */
-    public static $defaults = [
+    public static array $defaults = [
         "isAFK" => false,
         "kickAFK" => null,
         "lastMovement" => null,
@@ -42,7 +43,7 @@ class BaseSession{
         "noPacket" => false
     ];
     /** @var array */
-    public static $configDefaults = [
+    public static array $configDefaults = [
         "isAFK" => false,
         "isGod" => false,
         "homes" => [],
@@ -78,7 +79,7 @@ class BaseSession{
         foreach(self::$configDefaults as $k => $v){
             switch($k){
                 case "mutedUntil":
-                    $v = $this->{$k} instanceof \DateTime ? $this->{$k}->getTimestamp() : null;
+                    $v = $this->{$k} instanceof DateTime ? $this->{$k}->getTimestamp() : null;
                     break;
                 case "homes":
                     $v = $this->encodeHomes();
@@ -135,11 +136,11 @@ class BaseSession{
      */
 
     /** @var bool */
-    private $isAFK = false;
+    private bool $isAFK = false;
     /** @var int|null */
-    private $kickAFK = null;
+    private ?int $kickAFK = null;
     /** @var int|null */
-    private $lastMovement = null;
+    private ?int $lastMovement = null;
 
     /**
      * @return bool
@@ -235,7 +236,7 @@ class BaseSession{
      */
 
     /** @var null|string */
-    private $geoLocation = null;
+    private ?string $geoLocation = null;
 
     /**
      * @return null|string
@@ -260,7 +261,7 @@ class BaseSession{
      */
 
     /** @var bool */
-    private $isGod = false;
+    private bool $isGod = false;
 
     /**
      * @return bool
@@ -287,7 +288,7 @@ class BaseSession{
      */
 
     /** @var array */
-    private $homes = [];
+    private array $homes = [];
 
     private function loadHomes(): void{
         $homes = [];
@@ -413,9 +414,9 @@ class BaseSession{
      */
 
     /** @var bool */
-    private $isMuted = false;
-    /** @var \DateTime|null */
-    private $mutedUntil = null;
+    private bool $isMuted = false;
+    /** @var DateTime|null */
+    private ?DateTime $mutedUntil = null;
 
     /**
      * @return bool
@@ -425,17 +426,17 @@ class BaseSession{
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getMutedUntil(): ?\DateTime{
+    public function getMutedUntil(): ?DateTime{
         return $this->mutedUntil;
     }
 
     /**
      * @param bool $state
-     * @param \DateTime|null $expires
+     * @param DateTime|null $expires
      */
-    public function setMuted(bool $state, \DateTime $expires = null): void{
+    public function setMuted(bool $state, DateTime $expires = null): void{
         $this->isMuted = $state;
         $this->mutedUntil = $expires;
     }
@@ -449,7 +450,7 @@ class BaseSession{
      */
 
     /** @var null|string */
-    private $nick = null;
+    private ?string $nick = null;
 
     /**
      * @return null|string
@@ -612,7 +613,7 @@ class BaseSession{
      */
 
     /** @var bool */
-    private $isPvPEnabled = true;
+    private bool $isPvPEnabled = true;
 
     /**
      * @return bool
@@ -646,7 +647,7 @@ class BaseSession{
     /** @var bool|string */
     private $requestToAction = false;
     /** @var null|int */
-    private $requestToTask = null;
+    private ?int $requestToTask = null;
 
     /**
      * @return array|null
@@ -697,9 +698,9 @@ class BaseSession{
 
     //Requests from:
     /** @var null|string */
-    private $latestRequestFrom = null;
+    private ?string $latestRequestFrom = null;
     /** @var array */
-    private $requestsFrom = [];
+    private array $requestsFrom = [];
     /** This is how it works per player:
     *
     * "iksaku" => "tpto"  <--- Type of request
@@ -757,7 +758,7 @@ class BaseSession{
      */
 
     /** @var bool */
-    private $isUnlimitedEnabled = false;
+    private bool $isUnlimitedEnabled = false;
 
     /**
      * @return bool
@@ -784,14 +785,14 @@ class BaseSession{
      */
 
     /** @var bool */
-    private $isVanished = false;
+    private bool $isVanished = false;
 
     /**
      * If set to true, we will use Player packets instead of Effect ones
      *
      * @var bool
      */
-    private $noPacket = false;
+    private bool $noPacket = false;
 
     /**
      * @return bool

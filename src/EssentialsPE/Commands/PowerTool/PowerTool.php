@@ -112,7 +112,6 @@ class PowerTool extends BaseCommand{
                         $list .= "\n=== End of the lists ===";
                         $sender->sendMessage($list);
                         return true;
-                        break;
                     case "d":
                         if(!$this->getAPI()->getPowerToolItemCommand($sender, $item)){
                             $this->sendUsage($sender, $alias);
@@ -121,7 +120,6 @@ class PowerTool extends BaseCommand{
                         $this->getAPI()->disablePowerToolItem($sender, $item);
                         $sender->sendMessage(TextFormat::GREEN . "Command removed from this item.");
                         return true;
-                        break;
                 }
             }else{
                 $this->getAPI()->setPowerToolItemCommand($sender, $item, $command);

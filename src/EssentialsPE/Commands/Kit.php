@@ -79,7 +79,6 @@ class Kit extends BaseCommand{
             default:
                 $this->sendUsage($sender, $alias);
                 return false;
-                break;
         }
         $player = $sender;
         if(isset($args[1])){

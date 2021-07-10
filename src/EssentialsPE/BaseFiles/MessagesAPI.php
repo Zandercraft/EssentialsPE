@@ -12,10 +12,10 @@ class MessagesAPI{
     const VERSION = "2.0.0";
 
     /** @var Config */
-    private $config;
+    private Config $config;
 
     /** @var Config */
-    private $original;
+    private Config $original;
 
     /**
      * @param Loader $plugin

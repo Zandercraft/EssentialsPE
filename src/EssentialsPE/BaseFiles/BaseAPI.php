@@ -53,15 +53,15 @@ use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
 class BaseAPI{
     /** @var Loader */
-    private $ess;
+    private Loader $ess;
     /** @var BaseAPI */
-    private static $instance;
+    private static BaseAPI $instance;
 
     /** @var Config */
     /** @var array */
-    private $kits = [];
+    private array $kits = [];
     /** @var array */
-    private $warps = [];
+    private array $warps = [];
 
     /**
      * @param Loader $ess
@@ -971,7 +971,7 @@ class BaseAPI{
      */
     public function colorMessage(string $message, Player $player = null, bool $force = false): ?string{
         $message = preg_replace_callback(
-            "/(\\\&|\&)[0-9a-fk-or]/",
+            "/(\\\&|&)[0-9a-fk-or]/",
             function(array $matches){
                 return str_replace("\\§", "&", str_replace("&", "§", $matches[0]));
             },
@@ -1376,7 +1376,7 @@ class BaseAPI{
 
     /**
      * Return the command attached to the specified item if it's available
-     * NOTE: Only return the command if there're no more commands, for that use "getPowerToolItemCommands" (note the "s" at the final :P)
+     * NOTE: Only return the command if there are no more commands, for that use "getPowerToolItemCommands" (note the "s" at the final :P)
      *
      * @param Player $player
      * @param Item $item
@@ -1415,7 +1415,7 @@ class BaseAPI{
 
     /**
      * Let you remove 1 command of the item command list
-     * [ONLY if there're more than 1)
+     * [ONLY if there are more than 1)
      *
      * @param Player $player
      * @param Item $item
@@ -2095,7 +2095,7 @@ class BaseAPI{
      * @param float $pitch
      * @return bool
      */
-    public function setWarp($warp, Position $pos, float $yaw = 0.0, float $pitch = 0.0): bool{
+    public function setWarp(string $warp, Position $pos, float $yaw = 0.0, float $pitch = 0.0): bool{
         if(!$this->validateName($warp, false)){
             return false;
         }

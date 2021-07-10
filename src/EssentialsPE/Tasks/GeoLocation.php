@@ -12,9 +12,9 @@ use pocketmine\utils\Internet;
 
 class GeoLocation extends AsyncTask{
     /** @var Player[]|null */
-    private $player = null;
+    private ?array $player = null;
     /** @var array */
-    private $ip = [];
+    private array $ip = [];
 
     /**
      * @param Player|Player[]|null $player
@@ -34,12 +34,12 @@ class GeoLocation extends AsyncTask{
 
     public function onRun(): void{
         if($this->player === null){
-            $data = Internet::getURL("http://ip-api.com/json/");
+            $data = Internet::getURL("https://ip-api.com/json/");
             $this->setResult(json_decode($data, true)["country"] ?? "Unknown");
         }else{
             $list = [];
             foreach($this->ip as $spl => $ip){
-                $data = Internet::getURL("http://ip-api.com/json/" . $ip);
+                $data = Internet::getURL("https://ip-api.com/json/" . $ip);
                 $data = json_decode($data, true);
                 if(isset($data["message"]) && $data["message"] === "private range"){
                     $data["country"] = "server";

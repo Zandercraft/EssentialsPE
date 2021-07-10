@@ -57,7 +57,6 @@ class TPAccept extends BaseCommand{
             default:
                 $this->sendUsage($sender, $alias);
                 return false;
-                break;
         }
         $player->sendMessage(TextFormat::AQUA . $sender->getDisplayName() . TextFormat::GREEN . " accepted your teleport request! Teleporting...");
         $sender->sendMessage(TextFormat::GREEN . "Teleporting...");

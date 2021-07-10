@@ -10,7 +10,7 @@ use pocketmine\plugin\Plugin;
 
 abstract class BaseCustomEvent extends PluginEvent{
     /** @var BaseAPI */
-    private $api;
+    private BaseAPI $api;
 
     /**
      * @param BaseAPI $api

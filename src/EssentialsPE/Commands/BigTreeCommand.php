@@ -65,7 +65,6 @@ class BigTreeCommand extends BaseCommand{
             default:
                 $sender->sendMessage(TextFormat::RED . "Invalid tree type, try with:\n<tree|redwood|jungle>");
                 return false;
-                break;
         }
         $tree = new BigTree();
         $tree->placeObject($sender->getLevel(), $block->getFloorX(), $block->getFloorY() + 1, $block->getFloorZ(), $type);

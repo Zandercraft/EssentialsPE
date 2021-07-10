@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace EssentialsPE\Commands;
 
+use DateTime;
 use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\BaseFiles\BaseCommand;
 use pocketmine\command\Command;
@@ -39,7 +40,7 @@ class TempBan extends BaseCommand{
             $sender->sendMessage(TextFormat::RED . "[Error] Please specify a valid time");
             return false;
         }
-        /** @var \DateTime $date */
+        /** @var DateTime $date */
         $date = $info[0];
         $reason = $info[1];
         if(($player = $this->getAPI()->getPlayer($name)) instanceof Player){

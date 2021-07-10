@@ -11,7 +11,7 @@ use pocketmine\utils\TextFormat;
 
 class AFKKickTask extends BaseTask{
     /** @var Player  */
-    protected $player;
+    protected Player $player;
 
     /**
      * @param BaseAPI $api

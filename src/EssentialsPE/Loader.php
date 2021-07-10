@@ -78,7 +78,7 @@ use pocketmine\utils\TextFormat;
 
 class Loader extends PluginBase{
     /** @var BaseAPI */
-    private $api;
+    private BaseAPI $api;
 
     public function onEnable(): void{
         // Before anything else...

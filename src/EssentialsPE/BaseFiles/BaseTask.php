@@ -9,7 +9,7 @@ use pocketmine\scheduler\Task;
 
 abstract class BaseTask extends Task{
     /** @var BaseAPI */
-    private $api;
+    private BaseAPI $api;
 
     /**
      * @param BaseAPI $api

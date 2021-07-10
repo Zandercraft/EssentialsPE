@@ -13,11 +13,11 @@ class PlayerFlyModeChangeEvent extends BaseCustomEvent implements Cancellable{
     public static $handlerList = null;
 
     /** @var Player */
-    protected $player;
+    protected Player $player;
     /** @var bool */
-    protected $isFlying;
+    protected bool $isFlying;
     /** @var bool */
-    protected $mode;
+    protected bool $mode;
 
     /**
      * @param BaseAPI $api

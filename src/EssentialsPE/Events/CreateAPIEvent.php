@@ -7,12 +7,13 @@ namespace EssentialsPE\Events;
 use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\Loader;
 use pocketmine\event\plugin\PluginEvent;
+use RuntimeException;
 
 class CreateAPIEvent extends PluginEvent{
     public static $handlerList = null;
 
     /** @var string */
-    private $class;
+    private string $class;
 
     /**
      * @param Loader $plugin
@@ -21,7 +22,7 @@ class CreateAPIEvent extends PluginEvent{
     public function __construct(Loader $plugin, string $api){
         parent::__construct($plugin);
         if(!is_a($api, BaseAPI::class, true)){
-            throw new \RuntimeException("Class $api must extend " . BaseAPI::class);
+            throw new RuntimeException("Class $api must extend " . BaseAPI::class);
         }
         $this->class = BaseAPI::class;
     }
@@ -38,7 +39,7 @@ class CreateAPIEvent extends PluginEvent{
      */
     public function setClass(string $class): void{
         if(!is_a($class, BaseAPI::class, true)){
-            throw new \RuntimeException("Class $class must extend " . BaseAPI::class);
+            throw new RuntimeException("Class $class must extend " . BaseAPI::class);
         }
         $this->class = $class;
     }

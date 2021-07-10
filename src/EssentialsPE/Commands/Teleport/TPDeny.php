@@ -57,7 +57,6 @@ class TPDeny extends BaseCommand{
             default:
                 $this->sendUsage($sender, $alias);
                 return false;
-                break;
         }
         $player->sendMessage(TextFormat::AQUA . $sender->getDisplayName() . TextFormat::RED . " denied your teleport request");
         $sender->sendMessage(TextFormat::GREEN . "Denied " . TextFormat::AQUA . $player->getDisplayName() . (substr($player->getDisplayName(), -1, 1) === "s" ? "'" : "'s") . TextFormat::RED . " teleport request");

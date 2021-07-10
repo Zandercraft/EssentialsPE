@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace EssentialsPE\Commands;
 
+use DateTime;
 use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\BaseFiles\BaseCommand;
 use pocketmine\command\CommandSender;
@@ -40,7 +41,7 @@ class Mute extends BaseCommand{
             $sender->sendMessage(TextFormat::RED . $player->getDisplayName() . " can't be muted");
             return false;
         }
-        /** @var \DateTime $date */
+        /** @var DateTime $date */
         $tz = $this->getAPI()->getEssentialsPEPlugin()->getConfig()->get("timezone");
         date_default_timezone_set($tz);
         $date = null;

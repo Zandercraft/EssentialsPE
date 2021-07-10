@@ -6,6 +6,7 @@ namespace EssentialsPE\Commands;
 
 use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\BaseFiles\BaseCommand;
+use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\item\Item;
 use pocketmine\Player;
@@ -43,7 +44,7 @@ class ItemCommand extends BaseCommand{
         try {
             $item = $this->getAPI()->getItem($item_name = array_shift($args));
 
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $sender->sendMessage(TextFormat::RED . "[Error] Invalid Item or Item ID");
             return false;
         }

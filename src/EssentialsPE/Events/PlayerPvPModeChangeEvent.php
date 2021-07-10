@@ -13,11 +13,11 @@ class PlayerPvPModeChangeEvent extends BaseCustomEvent implements Cancellable{
     public static $handlerList = null;
 
     /** @var Player  */
-    protected $player;
+    protected Player $player;
     /** @var bool  */
-    protected $isEnabled;
+    protected bool $isEnabled;
     /** @var bool  */
-    protected $mode;
+    protected bool $mode;
 
     /**
      * @param BaseAPI $api

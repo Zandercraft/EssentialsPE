@@ -10,9 +10,9 @@ use pocketmine\level\Location;
 class BaseLocation extends Location{
 
     /** @var string */
-    protected $name;
+    protected string $name;
     /** @var string */
-    protected $levelName;
+    protected string $levelName;
 
     /**
      * @param string $name

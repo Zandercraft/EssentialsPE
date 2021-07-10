@@ -10,15 +10,15 @@ use pocketmine\Player;
 
 class BaseKit{
     /** @var string */
-    protected $name;
+    protected string $name;
     /** @var Item[] */
-    protected $items;
+    protected array $items;
 
     /**
      * @param string $name
      * @param array|Item[] $items
      */
-    public function __construct($name, array $items){
+    public function __construct(string $name, array $items){
         $this->name = $name;
         foreach($items as $i){
             if(!$i instanceof Item){
@@ -30,11 +30,10 @@ class BaseKit{
                     $amount = 1;
                 }
                 $i = explode(":", $i[0]);
+                $id = $i[0];
                 if(count($i) > 1){
-                    $id = $i[0];
                     $meta = $i[1];
                 }else{
-                    $id = $i[0];
                     $meta = 0;
                 }
                 $i = Item::get((int) $id, (int) $meta, (int) $amount);
@@ -62,7 +61,7 @@ class BaseKit{
      * @param int|null $meta
      * @return null|Item
      */
-    public function hasItem($id, $meta = null): ?Item{
+    public function hasItem(int $id, int $meta = null): ?Item{
         if(!isset($this->items[$id]) || ($meta !== null && $this->items[$id]->getDamage() !== $meta)){
             return null;
         }

@@ -13,11 +13,11 @@ class PlayerGodModeChangeEvent extends BaseCustomEvent implements Cancellable{
     public static $handlerList = null;
 
     /** @var Player */
-    protected $player;
+    protected Player $player;
     /** @var bool  */
-    protected $isGod;
+    protected bool $isGod;
     /** @var bool  */
-    protected $mode;
+    protected bool $mode;
 
     /**
      * @param BaseAPI $api

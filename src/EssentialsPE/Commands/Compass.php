@@ -49,7 +49,6 @@ class Compass extends BaseCommand{
             default:
                 $sender->sendMessage(TextFormat::RED . "Oops, there was an error while getting your face direction");
                 return false;
-                break;
         }
         $sender->sendMessage(TextFormat::AQUA . "You're facing " . TextFormat::YELLOW . $direction);
         return true;

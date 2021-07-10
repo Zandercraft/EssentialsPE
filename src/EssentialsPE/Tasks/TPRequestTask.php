@@ -11,7 +11,7 @@ use pocketmine\utils\TextFormat;
 
 class TPRequestTask extends BaseTask{
     /** @var Player  */
-    protected $requester;
+    protected Player $requester;
 
     /**
      * @param BaseAPI $api

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace EssentialsPE\Events;
 
+use DateTime;
 use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\BaseFiles\BaseCustomEvent;
 use pocketmine\event\Cancellable;
@@ -13,21 +14,21 @@ class PlayerMuteEvent extends BaseCustomEvent implements Cancellable{
     public static $handlerList = null;
 
     /** @var Player  */
-    protected $player;
+    protected Player $player;
     /** @var  bool */
-    protected $isMuted;
+    protected bool $isMuted;
     /** @var  bool */
-    protected $mode;
-    /** @var \DateTime|null */
-    protected $expires;
+    protected bool $mode;
+    /** @var DateTime|null */
+    protected ?DateTime $expires;
 
     /**
      * @param BaseAPI $api
      * @param Player $player
      * @param bool $mode
-     * @param \DateTime $expires
+     * @param DateTime $expires
      */
-    public function __construct(BaseAPI $api, Player $player, bool $mode, \DateTime $expires = null){
+    public function __construct(BaseAPI $api, Player $player, bool $mode, DateTime $expires = null){
         parent::__construct($api);
         $this->player = $player;
         $this->isMuted = $api->isMuted($player);
@@ -78,9 +79,9 @@ class PlayerMuteEvent extends BaseCustomEvent implements Cancellable{
      * int = "Date Time format" of expiration
      * null = Will keep forever
      *
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getMutedUntil(): ?\DateTime{
+    public function getMutedUntil(): ?DateTime{
         return $this->expires;
     }
 
@@ -89,9 +90,9 @@ class PlayerMuteEvent extends BaseCustomEvent implements Cancellable{
      * int = "Date Time format" of expiration
      * null = Will keep forever
      *
-     * @param \DateTime|null $expires
+     * @param DateTime|null $expires
      */
-    public function setMutedUntil(\DateTime $expires = null): void{
+    public function setMutedUntil(DateTime $expires = null): void{
         $this->expires = $expires;
     }
 } 

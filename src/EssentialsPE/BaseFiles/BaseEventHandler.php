@@ -9,7 +9,7 @@ use pocketmine\event\Listener;
 
 abstract class BaseEventHandler implements Listener{
     /** @var BaseAPI */
-    private $api;
+    private BaseAPI $api;
 
     /**
      * @param BaseAPI $api

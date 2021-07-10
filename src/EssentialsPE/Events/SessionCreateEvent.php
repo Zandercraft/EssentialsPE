@@ -12,9 +12,9 @@ class SessionCreateEvent extends BaseCustomEvent{
     public static $handlerList = null;
 
     /** @var Player  */
-    public $player;
+    public Player $player;
     /** @var array  */
-    public $values;
+    public array $values;
 
     /**
      * @param BaseAPI $api

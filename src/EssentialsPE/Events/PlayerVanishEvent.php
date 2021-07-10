@@ -13,15 +13,15 @@ class PlayerVanishEvent extends BaseCustomEvent implements Cancellable{
     public static $handlerList = null;
 
     /** @var Player  */
-    protected $player;
+    protected Player $player;
     /** @var bool  */
-    protected $isVanished;
+    protected bool $isVanished;
     /** @var bool */
-    protected $willVanish;
+    protected bool $willVanish;
     /** @var bool */
-    protected $noPacket;
+    protected bool $noPacket;
     /** @var array */
-    protected $keepHiddenFor = [];
+    protected array $keepHiddenFor = [];
 
     /**
      * @param BaseAPI $api

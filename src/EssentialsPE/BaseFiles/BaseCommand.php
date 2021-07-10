@@ -11,7 +11,7 @@ use pocketmine\utils\TextFormat;
 
 abstract class BaseCommand extends Command implements PluginIdentifiableCommand{
     /** @var BaseAPI  */
-    private $api;
+    private BaseAPI $api;
     /** @var bool|string */
     private $consoleUsageMessage;
 

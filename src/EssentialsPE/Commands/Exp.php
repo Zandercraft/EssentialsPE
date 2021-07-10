@@ -7,12 +7,13 @@ namespace EssentialsPE\Commands;
 use EssentialsPE\BaseFiles\BaseAPI;
 use EssentialsPE\BaseFiles\BaseCommand;
 use pocketmine\command\CommandSender;
+use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
 class Exp extends BaseCommand {
 
     public $xplimit = [];
-    public $player = [];
+    public $player;
     public $xplimitlevel = [];
 
     /**
