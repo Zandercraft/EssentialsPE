@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace EssentialsPE\BaseFiles;
 
+use DateInterval;
+use DateTime;
 use EssentialsPE\Events\PlayerAFKModeChangeEvent;
 use EssentialsPE\Events\PlayerFlyModeChangeEvent;
 use EssentialsPE\Events\PlayerGodModeChangeEvent;
@@ -51,6 +53,11 @@ use pocketmine\Server;
 use pocketmine\utils\Config;
 use pocketmine\utils\Random;
 use pocketmine\utils\TextFormat;
+use ReflectionClass;
+use function stripos;
+use function strlen;
+use const PHP_INT_MAX;
+
 class BaseAPI{
     /** @var Loader */
     private Loader $ess;
@@ -746,7 +753,7 @@ class BaseAPI{
 	 * @return string|null
 	 */
 	public function getReadableName(Item $item): string{
-	    $itemClass = new \ReflectionClass("pocketmine\\item\\Item");
+	    $itemClass = new ReflectionClass("pocketmine\\item\\Item");
 	    $itemConstant = "AIR";
 		foreach($itemClass->getConstants() as $constant => $value) {
 		    if($value === $item->getId()) {
@@ -768,7 +775,7 @@ class BaseAPI{
 	 * @return Item
 	 */
 	public function readableNameToItem(string $item_name): Item{
-		$itemClass = new \ReflectionClass("pocketmine\\item\\Item");
+		$itemClass = new ReflectionClass("pocketmine\\item\\Item");
 		$itemConstant = strtoupper(str_replace(" ", "_", $item_name));
 		if($itemClass->hasConstant($itemConstant)) {
 			return Item::get($itemClass->getConstant($itemConstant));
@@ -1094,7 +1101,7 @@ class BaseAPI{
      *
      * @param Player $player
      *
-     * @return \DateTime|null|bool
+     * @return DateTime|null|bool
      */
     public function getMutedUntil(Player $player){
         if(!$this->isMuted($player)){
@@ -1108,12 +1115,12 @@ class BaseAPI{
      *
      * @param Player $player
      * @param bool $state
-     * @param \DateTime|null $expires
+     * @param DateTime|null $expires
      * @param bool $notify
      *
      * @return bool
      */
-    public function setMute(Player $player, bool $state, \DateTime $expires = null, bool $notify = true): bool{
+    public function setMute(Player $player, bool $state, DateTime $expires = null, bool $notify = true): bool{
         if($this->isMuted($player) !== $state){
             $this->getServer()->getPluginManager()->callEvent($ev = new PlayerMuteEvent($this, $player, $state, $expires));
             if($ev->isCancelled()){
@@ -1131,10 +1138,10 @@ class BaseAPI{
      * Switch the Mute mode on/off automatically
      *
      * @param Player $player
-     * @param \DateTime|null $expires
+     * @param DateTime|null $expires
      * @param bool $notify
      */
-    public function switchMute(Player $player, \DateTime $expires = null, bool $notify = true): void{
+    public function switchMute(Player $player, DateTime $expires = null, bool $notify = true): void{
         $this->setMute($player, !$this->isMuted($player), $expires, $notify);
     }
 
@@ -1236,11 +1243,11 @@ class BaseAPI{
          * ALL THE RIGHTS FROM THE FOLLOWING CODE BELONGS TO POCKETMINE-MP
          */
         if(!$found){
-            $delta = \PHP_INT_MAX;
+            $delta = PHP_INT_MAX;
             foreach($this->getServer()->getOnlinePlayers() as $p){
                 // Clean the Display Name due to colored nicks :S
-                if(\stripos(($n = TextFormat::clean($p->getDisplayName(), true)), $player) === 0){
-                    $curDelta = \strlen($n) - \strlen($player);
+                if(stripos(($n = TextFormat::clean($p->getDisplayName(), true)), $player) === 0){
+                    $curDelta = strlen($n) - strlen($player);
                     if($curDelta < $delta){
                         $found = $p;
                         $delta = $curDelta;
@@ -1570,7 +1577,7 @@ class BaseAPI{
                     }
                     $m = $values["isMuted"];
                     if(is_int($t = $values["mutedUntil"])){
-                        $date = new \DateTime();
+                        $date = new DateTime();
                         $mU = date_timestamp_set($date, $values["mutedUntil"]);
                     }else{
                         $mU = $values["mutedUntil"];
@@ -1598,7 +1605,7 @@ class BaseAPI{
             }
             $r[] = $this->sessions[$spl];
         }
-        $this->getServer()->getAsyncPool()->submitTask(new GeoLocation($player));
+        // $this->getServer()->getAsyncPool()->submitTask(new GeoLocation($player)); TODO: Re-implement after error fix.
         $this->getEssentialsPEPlugin()->getLogger()->debug("Finished session creation.");
         return $r;
     }
@@ -1700,7 +1707,7 @@ class BaseAPI{
         if(trim($string) === ""){
             return null;
         }
-        $t = new \DateTime();
+        $t = new DateTime();
         preg_match_all("/[0-9]+(y|mo|w|d|h|m|s)|[0-9]+/", $string, $found);
         if(count($found[0]) < 1){
             return null;
@@ -1711,18 +1718,18 @@ class BaseAPI{
                 case "y":
                 case "w":
                 case "d":
-                    $t->add(new \DateInterval("P" . $i. strtoupper($c)));
+                    $t->add(new DateInterval("P" . $i. strtoupper($c)));
                     break;
                 case "mo":
-                    $t->add(new \DateInterval("P" . $i. strtoupper(substr($c, 0, strlen($c) -1))));
+                    $t->add(new DateInterval("P" . $i. strtoupper(substr($c, 0, strlen($c) -1))));
                     break;
                 case "h":
                 case "m":
                 case "s":
-                    $t->add(new \DateInterval("PT" . $i . strtoupper($c)));
+                    $t->add(new DateInterval("PT" . $i . strtoupper($c)));
                     break;
                 default:
-                    $t->add(new \DateInterval("PT" . $i . "S"));
+                    $t->add(new DateInterval("PT" . $i . "S"));
                     break;
             }
             $string = str_replace($found[0][$k], "", $string);
